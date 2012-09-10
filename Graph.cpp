@@ -7,6 +7,7 @@
  */
 
 #include "Graph.h"
+#define GSTERR_NEGATIVE_SURPLUS 1 //codigo de erro de tamanho do vetor (acho)
 
 template <class T> class Complement;
 

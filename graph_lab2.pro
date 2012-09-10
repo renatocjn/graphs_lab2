@@ -8,7 +8,7 @@ SOURCES += main.cpp \
 
 HEADERS += \
     Weight.h \
-    Iterator.h \
     Graph.h \
-    AdjMatrix.h
+    AdjMatrix.h \
+    Graphs.h
 
