@@ -8,7 +8,7 @@
 
 #include "Graphs.h"
 
-Graph * readDimacsGraph(FILE * graphFile, const graphType t) { //coisas do correa
+Graph * readDimacsGraph(FILE * graphFile, const graphType t) { //coisas do prof correa
 	char               	type  = ' ';
 	char               	linestr[100];
 	char *             	datastr;
@@ -137,6 +137,8 @@ public:
 
     int next()
     {
+        if(lista->empty()) return -1;
+
         //receber e remover o elemento da lista
         int next = lista->front(); lista->pop();
 //        cout << "next: " << next << endl; //TESTE
@@ -154,11 +156,11 @@ public:
 
         for (int i=0; i<deg; i++) //loop da busca em largura
         {
-            if(!visited[i])
+            if(!visited[adj[i]])
             {                
                 lista->push(adj[i]);
 //                cout << "vizinho - " << g->vertex(adj[i]) << endl; //TESTE
-                visited[i] = true;
+                visited[adj[i]] = true;
             }
         }
 
@@ -197,21 +199,71 @@ Iterator * breadth(Graph *g, int v, Weight *w) // busca em largura ponderado
 
 class depth_iterator : public Iterator
 {
+    stack<int> * pilha;
+    Graph *g;
+    int *adj;
+    int *colors;
+    static const int BRANCO = 0, PRETO = 1, CINZA = 2;
+
 public:
+    depth_iterator(Graph *g, int v): pilha(new stack<int>), g(g)
+    {
+        //vetor para vertices vizinhos
+        adj = new int[g->nverts()];
+
+        //vetor para marcar as cores
+        colors = new int[g->nverts()];
+
+        //setando cores brancas
+        memset(colors, BRANCO, g->nverts()*sizeof(int));
+
+        //inicializando a pilha
+        pilha->push(v);
+
+        //pulo o primeiro elemento 'v'
+        this->next();
+    }
+
+
     int next()
     {
-        return 0;
+        if(pilha->empty()) return -1;
+
+        //removo o proximo da pilha e digo que ele é cinza
+        int next = pilha->top(); pilha->pop();
+        colors[next] = CINZA;
+
+        //aqui vejo quantos nós vizinhos a 'next' existem, e coloco em 'adj_size'
+        int adj_size;
+        g->adjSize(next, &adj_size);
+
+        //aqui coloco os vizinhos de 'next' no vetor adj
+        int surplus;
+        g->adjToArray(next, adj_size, adj, &surplus);
+
+        for(int i=0; i<adj_size; i++)//loop busca em profundidade
+        {
+            if(colors[adj[i]] == BRANCO)
+            {
+                pilha->push(adj[i]);
+            }
+        }
+
+        //devo remover nós já visitados para nao repetir quando eu estiver voltando na pilha
+        while((colors[pilha->top()] != BRANCO) && (!pilha->empty())) pilha->pop();
+
+        return next;
     }
 
     bool hasNext()
     {
-        return false;
+        return !pilha->empty();
     }
 };
 
 Iterator * depth(Graph *g, int v) // busca em profundedade
 {
-    return NULL;
+    return new depth_iterator(g, v);
 }
 
 class comp_iterator : public Iterator

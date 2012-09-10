@@ -18,11 +18,11 @@ int main()
     cout << "arest: " << g->nedges() << endl;
     cout << "rand: " << r << endl;
 
-    Iterator * it = breadth(g, r);
+    Iterator * it = depth(g, r);
+
     cout << "\t** begin **" << endl;
-    while( it->hasNext() )
+    while(it->hasNext())
     {
-//        cout << "entrou" << endl;//TESTE
         cout << it->next() << endl;
     }
     cout << "\t ** end **" << endl;
