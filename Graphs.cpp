@@ -132,7 +132,7 @@ public:
         //for (int i=0; i<g->nverts(); i++) {if(visited[i] != false) {cout << " erro no visited!" << endl;}} //TESTE
 
         //fazendo assim eu pulo o primeiro elemento 'v' da busca
-        this->next();
+//        this->next();
     }
 
     int next()
@@ -141,25 +141,18 @@ public:
 
         //receber e remover o elemento da lista
         int next = lista->front(); lista->pop();
-//        cout << "next: " << next << endl; //TESTE
-        int surplus; //nao sei para que isso...
+        visited[next] = true;
 
+        int surplus; //nao sei para que essa variavel...
         //nisso eu descubro o grau do vetice 'next'
         int deg; g->adjSize(next, &deg);
-        //nisso eu coloco os vizinhos de 'next' no vetor adj
         g->adjToArray(next, deg, adj, &surplus);
-
-//        //TESTE
-//        cout << "surplus: " << surplus << endl;
-//        for(int i = 0; i < deg; i++) {cout << adj[i] << ' ';}
-//        cout << endl;
 
         for (int i=0; i<deg; i++) //loop da busca em largura
         {
             if(!visited[adj[i]])
             {                
                 lista->push(adj[i]);
-//                cout << "vizinho - " << g->vertex(adj[i]) << endl; //TESTE
                 visited[adj[i]] = true;
             }
         }
@@ -221,7 +214,7 @@ public:
         pilha->push(v);
 
         //pulo o primeiro elemento 'v'
-        this->next();
+        //this->next();
     }
 
 
@@ -250,7 +243,10 @@ public:
         }
 
         //devo remover nós já visitados para nao repetir quando eu estiver voltando na pilha
-        while((colors[pilha->top()] != BRANCO) && (!pilha->empty())) pilha->pop();
+        while((colors[pilha->top()] == PRETO) && (!pilha->empty())) pilha->pop();
+
+        //finalizando o nó com preto
+        colors[next] = PRETO;
 
         return next;
     }
