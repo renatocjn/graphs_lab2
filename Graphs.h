@@ -7,16 +7,10 @@
 #include <stack>
 #include <cstdlib>
 
-Graph * readDimacsGraph(FILE * graphFile, const graphType t);
+Graph *readDimacsGraph(FILE * graphFile, const graphType t);
 
-Iterator * breadth(Graph *g, int v); //busca em largura
+Iterator *breadth(Graph *g, int v); //busca em largura
 
-Iterator * depth(Graph *g, int v); // busca em profundedade
-
-Iterator * connectedComp(Graph *g); // componentes conexos
-
-Iterator * spanTree(Graph *g, Weight *w);  // arvore geradora maxima
-
-Iterator * breadth(Graph *g, int v, Weight *w); // busca em largura ponderado
+Iterator *depth(Graph *g, int v); // busca em profundedade
 
 #endif // GRAPHS_H

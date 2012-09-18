@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Graph.h"
-#include "Graphs.cpp"
+#include "Graphs.h"
 #include <cstdio>
 
 using namespace std;
@@ -14,18 +14,15 @@ int main()
     srand(time(NULL));
     int r = rand()%g->nverts();
 
-    cout << endl << "nverts: " << g->nverts() << endl;
-    cout << "nedges: " << g->nedges() << endl;
-    cout << "rand: " << r + 1 << endl;
-
     Iterator * it = depth(g, r);
 
-    cout << "\t** begin **" << endl;
+    cout << "\t*** ITERACAO INICIADA NO VERTICE " << r+1 << " ***" << endl;
     while(it->hasNext())
     {
         cout << it->next()+1 << endl;
     }
-    cout << "\t ** end **" << endl;
+
+    cout << endl;
 
     return 0;
 }

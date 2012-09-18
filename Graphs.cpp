@@ -8,7 +8,7 @@
 
 #include "Graphs.h"
 
-Graph * readDimacsGraph(FILE * graphFile, const graphType t) { //coisas do prof correa
+Graph *readDimacsGraph(FILE * graphFile, const graphType t) { //coisas do prof correa
 	char               	type  = ' ';
 	char               	linestr[100];
 	char *             	datastr;
@@ -117,22 +117,22 @@ class breadth_iterator : public Iterator
 public:
     breadth_iterator(int v, Graph* g): g(g), lista(new queue<int>)
     {
+        int n = g->nverts(); //variavel para evitar chamada multipla de g->nverts()
+
         //inicializando a lista
         lista->push(g->vertex(v));
 
         //vetor para vertices vizinhos
-        adj = new int[g->nverts()];
+        adj = new int[n];
 
         //vetor para visualizar os visitados
-        visited = new bool[g->nverts()];
+        visited = new bool[n];
 
         //setando o vetor com false
-        memset(visited, false, g->nverts()*sizeof(bool));
-
-        //for (int i=0; i<g->nverts(); i++) {if(visited[i] != false) {cout << " erro no visited!" << endl;}} //TESTE
+        memset(visited, false, n*sizeof(bool));
 
         //fazendo assim eu pulo o primeiro elemento 'v' da busca
-//        this->next();
+        //this->next();
     }
 
     int next()
@@ -140,7 +140,10 @@ public:
         if(lista->empty()) return -1;
 
         //receber e remover o elemento da lista
-        int next = lista->front(); lista->pop();
+        int next = lista->front();
+        lista->pop();
+
+        //setar visitado
         visited[next] = true;
 
         int surplus; //nao sei para que essa variavel...
@@ -166,28 +169,9 @@ public:
     }
 };
 
-Iterator * breadth(Graph *g, int v) //busca em largura
+Iterator *breadth(Graph *g, int v) //busca em largura
 {
     return new breadth_iterator(v, g);
-}
-
-class weighted_breadth_iterator : public Iterator
-{
-public:
-    int next()
-    {
-        return 0;
-    }
-
-    bool hasNext()
-    {
-        return false;
-    }
-};
-
-Iterator * breadth(Graph *g, int v, Weight *w) // busca em largura ponderado
-{
-    return NULL;
 }
 
 class depth_iterator : public Iterator
@@ -196,19 +180,23 @@ class depth_iterator : public Iterator
     Graph *g;
     int *adj;
     int *colors;
-    static const int BRANCO = 0, PRETO = 1, CINZA = 2;
+
+    //variaveis constantes para cores
+    static const int BRANCO = 0, CINZA = 1, PRETO = 2;
 
 public:
     depth_iterator(Graph *g, int v): pilha(new stack<int>), g(g)
     {
+        int n = g->nverts(); //variavel para evitar chamada multipla de g->nverts()
+
         //vetor para vertices vizinhos
-        adj = new int[g->nverts()];
+        adj = new int[n];
 
         //vetor para marcar as cores
-        colors = new int[g->nverts()];
+        colors = new int[n];
 
         //setando cores brancas
-        memset(colors, BRANCO, g->nverts()*sizeof(int));
+        memset(colors, BRANCO, n*sizeof(int));
 
         //inicializando a pilha
         pilha->push(v);
@@ -223,8 +211,8 @@ public:
         if(pilha->empty()) return -1;
 
         //removo o proximo da pilha e digo que ele é cinza
-        int next = pilha->top(); pilha->pop();
-        colors[next] = CINZA;
+        int next = pilha->top();
+        pilha->pop();
 
         //aqui vejo quantos nós vizinhos a 'next' existem, e coloco em 'adj_size'
         int adj_size;
@@ -238,12 +226,10 @@ public:
         {
             if(colors[adj[i]] == BRANCO)
             {
+                colors[adj[i]] = CINZA;
                 pilha->push(adj[i]);
             }
         }
-
-        //devo remover nós já visitados para nao repetir quando eu estiver voltando na pilha
-        while((colors[pilha->top()] == PRETO) && (!pilha->empty())) pilha->pop();
 
         //finalizando o nó com preto
         colors[next] = PRETO;
@@ -257,45 +243,7 @@ public:
     }
 };
 
-Iterator * depth(Graph *g, int v) // busca em profundedade
+Iterator *depth(Graph *g, int v) // busca em profundedade
 {
     return new depth_iterator(g, v);
-}
-
-class comp_iterator : public Iterator
-{
-public:
-    int next()
-    {
-        return 0;
-    }
-
-    bool hasNext()
-    {
-        return false;
-    }
-};
-
-Iterator * connectedComp(Graph *g) // componentes conexos
-{
-    return NULL;
-}
-
-class spantree_iterator : public Iterator
-{
-public:
-    int next()
-    {
-        return 0;
-    }
-
-    bool hasNext()
-    {
-        return false;
-    }
-};
-
-Iterator * spanTree(Graph *g, Weight *w)  // arvore geradora maxima
-{
-    return NULL;
 }
